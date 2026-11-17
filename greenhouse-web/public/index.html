@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Greenhouse Monitoring</title>
+<meta name="description" content="Arduino/ESP32 greenhouse monitoring with live dashboards, alerts, remote settings and AI analytics.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%232c7a4b'/%3E%3Cpath d='M16 25V13m0 0c0-5 4-7 9-7 0 5-3 8-9 7zm0 3c0-4-3-6-8-6 0 4 3 7 8 6z' stroke='%23fff' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#view">Skip to content</a>
+
+<!-- ===== Public landing page + login ===== -->
+<div id="landing">
+  <div class="land-top">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="var(--primary)"/><path d="M16 25V13m0 0c0-5 4-7 9-7 0 5-3 8-9 7zm0 3c0-4-3-6-8-6 0 4 3 7 8 6z" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      Smart Greenhouse
+    </a>
+    <a href="#how" class="small">How it works</a>
+  </div>
+
+  <section class="hero">
+    <div>
+      <h1>Smart greenhouse monitoring</h1>
+      <p class="lead">Measures temperature, humidity and soil moisture, controls the fan and water pump automatically, and shows the data on a live dashboard with alerts and AI analysis.</p>
+      <div class="pills"><span class="pill">Live readings</span><span class="pill">Automatic fan &amp; pump</span><span class="pill">Safe failure handling</span><span class="pill">AI insights</span></div>
+    </div>
+
+    <div class="auth-card" id="authBox">
+      <div class="tabs" role="tablist" aria-label="Account">
+        <button role="tab" id="tabLogin" aria-selected="true">Log in</button>
+        <button role="tab" id="tabRegister" aria-selected="false">Register</button>
+      </div>
+      <form id="authForm" novalidate>
+        <label class="field"><span>Email</span><input id="email" type="email" autocomplete="username" required></label>
+        <label class="field"><span>Password <small id="pwHint" class="hidden">(8+ characters)</small></span><input id="password" type="password" autocomplete="current-password" required></label>
+        <label class="field hidden" id="roleBox"><span>Account type</span><select id="role"><option value="user">User</option><option value="admin">Administrator</option></select><small id="slots" class="muted"></small></label>
+        <button class="btn" id="authSubmit" type="submit" style="width:100%">Log in</button>
+        <p id="authMsg" class="error" role="alert" aria-live="polite"></p>
+      </form>
+      <p class="small muted" id="authNote">Users see a greenhouse after an administrator assigns one to them.</p>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <h2>How the system works</h2>
+    <p class="muted">Every reading travels the same path, and every screen reads from the database, never straight from the device.</p>
+    <div class="flow">
+      <div><b>Sensors</b><span>Temperature &amp; humidity, soil moisture, light</span></div>
+      <div><b>Arduino / ESP32</b><span>Decides locally: fan, pump, light. Works even if Wi-Fi drops.</span></div>
+      <div><b>Web backend</b><span>Validates data, raises alerts, enforces who may see what.</span></div>
+      <div><b>Database</b><span>Timestamped readings, settings, alerts, activity.</span></div>
+      <div><b>Dashboard &amp; AI</b><span>Charts, history, and plain-language analysis.</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>What it does</h2>
+    <div class="cols3">
+      <div class="feat"><h3>Controls by itself</h3>
+        <ul><li>Fan cools when it gets too warm</li><li>Pump waters when the soil is dry</li><li>Light follows a schedule</li></ul>
+        <div class="states"><span class="chip ok">IDLE</span><span class="chip info">COOLING</span><span class="chip info">WATERING</span><span class="chip bad">FAULT</span></div></div>
+      <div class="feat"><h3>Fails safe</h3>
+        <ul><li>Sensor failure puts the device in FAULT and stops the actuators</li><li>Lost connection: it keeps its last settings</li><li>Stale or missing data is clearly marked, never hidden</li></ul></div>
+      <div class="feat"><h3>Remote settings</h3>
+        <ul><li>Change fan and pump thresholds from the site</li><li>See whether the device confirmed the change</li><li>AI suggestions are only suggestions: you review them first</li></ul></div>
+      <div class="feat"><h3>For growers</h3>
+        <ul><li>Your own greenhouse, your own data</li><li>Charts and history for any date range</li><li>Alerts when something goes wrong</li></ul></div>
+      <div class="feat"><h3>For administrators</h3>
+        <ul><li>All users, greenhouses and assignments</li><li>System-wide monitoring and comparison</li><li>Alert rules and activity record</li></ul></div>
+      <div class="feat"><h3>Honest AI</h3>
+        <ul><li>The server calculates the numbers</li><li>AI only interprets them</li><li>Facts, statistics and AI opinion are labelled separately</li></ul></div>
+    </div>
+  </section>
+  <footer class="land-foot">Arduino / Embedded Systems &amp; Web Development 2 · Collaborative final project</footer>
+</div>
+
+<!-- ===== Application ===== -->
+<div id="app" class="hidden">
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="var(--primary)"/><path d="M16 25V13m0 0c0-5 4-7 9-7 0 5-3 8-9 7zm0 3c0-4-3-6-8-6 0 4 3 7 8 6z" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      <span>Smart Greenhouse</span>
+    </a>
+    <nav id="nav" aria-label="Main"></nav>
+    <div class="who"><span id="who"></span><button class="btn ghost sm" id="logout">Log out</button></div>
+  </header>
+  <div id="banner" aria-live="polite"></div>
+  <main id="view" tabindex="-1"></main>
+</div>
+
+<dialog id="dlg"></dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
